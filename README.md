@@ -1,4 +1,4 @@
-# Práctica 10
+# Práctica 11
 
 ## Los github Actions están correctamente configurados.
 
@@ -7,7 +7,7 @@
 [![SonarCloud](https://sonarcloud.io/images/project_badges/sonarcloud-orange.svg)](https://sonarcloud.io/summary/new_code?id=ULL-ESIT-INF-DSI-2223_ull-esit-inf-dsi-22-23-prct10-fs-proc-sockets-funko-app-edurguezsb)
 
 
-En esta actividad, la Práctica 10 de la asignatura, se nos plantean realizar una serie de ejercicios, y también a mejorar la aplicación de Funkos que habíamos desarrollado en la práctica anterior. También, al igual que llevamos haciendo en prácticas anteriores hasta ahora, a parte de llevar a cabo una buena estructura y organización de ficheros y directorios, no debemos olvidarnos de utilizar los principios SOLID,sus pruebas TDD o BDD para confirmar el correcto funcionamiento del código desarrollado, todo el código con comentarios tipo TypeDoc, cubrimiento de código con Istanbul y Coveralls, Sonar Cloud para analizar la calidad, y los github actions.
+En esta actividad, la Práctica 11 de la asignatura, se nos plantean realizar una serie de ejercicios, y también a mejorar la aplicación de Funkos que habíamos desarrollado en la práctica anterior. También, al igual que llevamos haciendo en prácticas anteriores hasta ahora, a parte de llevar a cabo una buena estructura y organización de ficheros y directorios, no debemos olvidarnos de utilizar los principios SOLID,sus pruebas TDD o BDD para confirmar el correcto funcionamiento del código desarrollado, todo el código con comentarios tipo TypeDoc, cubrimiento de código con Istanbul y Coveralls, Sonar Cloud para analizar la calidad, y los github actions.
 
 Los objetivos de esta práctica son seguir familiarizándonos con el manejo de las herramientas mencionadas anteriormente ya que son bastante fundamentales a la hora de realizar un proyecto en TypeScript para asegurarnos de que nuestra solución es buena, y que serán necesarios para el correcto desarrollo y avance en la asignatura de Desarrollo de Sistemas Informáticos que próximamente en 2 o 3 prácticas más llegará a su fin.
 
