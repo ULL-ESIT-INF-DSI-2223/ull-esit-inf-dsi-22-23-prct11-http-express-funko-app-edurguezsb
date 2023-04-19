@@ -1,124 +1,66 @@
-import { spawn } from 'child_process'
-import express from 'express'
+import express from "express";
+import http from "http";
+import { createServer, IncomingMessage, ServerResponse } from 'http';
+/**
+ * Instancia de la aplicación Express
+ * @type {express.Express}
+ */
+const app = express();
 
 /**
- * Class for a simple web server with express to execute commands.
+ * Puerto en el que escucha el servidor
+ * @type {number}
  */
-export class WebServer {
-  /**
-   * Instance of the express server.
-   * @private
-   */
-  private server
-  /**
-   * Instance of the express application.
-   * @private
-   * @type {express.Application}
-   */
-  private app: express.Application = express()
+const port = 3000;
 
-  /**
-   * Creates an instance of WebServer.
-   * @constructor
-   * @public
-   */
-  public constructor() {
-    this.app.get('/execmd', this.execmd)
-    this.app.get('*', this.notFound)
-  }
+/**
+ * Manejador de la ruta '/weather'
+ * @param {express.Request} req Objeto Request de Express
+ * @param {express.Response} res Objeto Response de Express
+ */
+app.get('/weather', (req, res) => {
+  const { location } = req.query;
+  const api_key = '5c3557e8d64cd23142664b76ea4324f6';
 
-  /**
-   * Starts the web server.
-   * @param {number} port - The port to listen on.
-   * @public
-   * @returns {void}
-   * @example
-   * ```typescript
-   * const server = new WebServer();
-   * server.start(3000);
-   * ```
-   */
-  public start(port: number) {
-    this.server = this.app.listen(port, () => {
-      console.log(`WebServer listening on port ${port}`)
-    })
-  }
+  // Se realiza una petición HTTP GET a la API de Weatherstack
+  http.get(`http://api.weatherstack.com/current?access_key=${api_key}&query=${location}`, (response) => {
+    let data = '';
 
-  /**
-   * Stops the web server.
-   * @public
-   * @returns {void}
-   * @example
-   * ```typescript
-   * const server = new WebServer();
-   * server.start(3000);
-   * server.stop();
-   * ```
-   */
-  public stop() {
-    this.server.close()
-  }
+    // Se concatenan los datos de la respuesta a medida que se reciben
+    response.on('data', (chunk) => {
+      data += chunk;
+    });
 
-  /**
-   * Executes a command.
-   * @param req Request of client
-   * @param res Response to client
-   * @private
-   */
-  private execmd = (req: express.Request, res: express.Response) => {
-    const cmd = req.query.cmd as string
-    let args: string[] = []
-    if (req.query.args)
-      args = (req.query.args as string).split(' ')
-    console.log(`cmd: ${cmd}, args: ${args}`)
-    try {
-      // Check if command is empty
-      /*if (!cmd) {
-        res.send('<h1>Error 400 - Bad Request</h1>')
-        return
-      }*/
+    // Cuando finaliza la respuesta, se procesan los datos y se envía la respuesta al cliente
+    response.on('end', () => {
+      const result = JSON.parse(data);
 
-      // Execute command
-      const command = spawn(cmd, args)
-      let output = ''
-      let type = 'error'
+      if (result.success === false) {
+        // Si la respuesta indica un error, se envía un código de estado 500 y un mensaje de error
+        res.status(500).json({ error: result.error.info });
+      } else {
+        // Si la respuesta es satisfactoria, se envía la respuesta al cliente
+        res.json(result);
+      }
+    });
+  }).on('error', (error) => {
+    // Si se produce un error durante la petición, se envía un código de estado 500 y un mensaje de error
+    res.status(500).json({ error: error.message });
+  });
+});
 
-      // Get output in case of error because of wrong command
-      command.on('error', (chunk) => {
-        output += chunk
-      })
+/**
+ * Manejador de todas las demás rutas (404)
+ * @param {express.Request} req Objeto Request de Express
+ * @param {express.Response} res Objeto Response de Express
+ */
+app.use((req, res) => {
+  res.status(404).json({ error: 'Not found' });
+});
 
-      // Get output in case of error because of wrong arguments
-      command.stderr.on('data', (chunk) => {
-        output += chunk
-      })
-
-      // Get output in case of success
-      command.stdout.on('data', (chunk) => {
-        output += chunk
-        type = 'output'
-      })
-
-      // Send output to client
-      command.on('close', (code) => {
-        console.log(`Exit code: ${code}\n`)
-        res.json({ type, output })
-      })
-    } catch (err) {
-      console.log(`Error: ${err}`)
-      res.json({ error: err })
-    }
-  }
-
-  /**
-   * Sends a 404 error.
-   * @param req Request of client
-   * @param res Response to client
-   * @private
-   */
-  private notFound = (req: express.Request, res: express.Response) => {
-    res.send('<h1>Error 404 - Not Found</h1>')
-  }
-}
-// Test
-new WebServer().start(3000)
+/**
+ * Inicia el servidor y se escucha en el puerto especificado
+ */
+app.listen(port, () => {
+  console.log(`Se está ejecutando el servidor en el puerto ${port}:`);
+});
