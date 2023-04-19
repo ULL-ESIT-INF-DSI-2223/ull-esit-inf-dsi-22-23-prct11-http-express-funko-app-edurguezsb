@@ -1,6 +1,11 @@
 import express from "express";
 import http from "http";
-import { createServer, IncomingMessage, ServerResponse } from 'http';
+import { 
+  createServer, 
+  IncomingMessage, 
+  ServerResponse } from 'http';
+
+
 /**
  * Instancia de la aplicación Express
  * @type {express.Express}
@@ -54,7 +59,7 @@ app.get('/weather', (req, res) => {
  * @param {express.Request} req Objeto Request de Express
  * @param {express.Response} res Objeto Response de Express
  */
-app.use((req, res) => {
+app.get("*", (req, res) => {
   res.status(404).json({ error: 'Not found' });
 });
 
